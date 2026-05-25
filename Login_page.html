@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>SkyWings | Light Airline Ticketing</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', 'Poppins', 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    /* Light & airy background with subtle movement */
+    body {
+      min-height: 100vh;
+      background: linear-gradient(125deg, #FDF8F0 0%, #F5EDE3 40%, #F1E2D1 100%);
+      background-attachment: fixed;
+      position: relative;
+    }
+
+    /* Softer glass pattern overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23810B38' opacity='0.04'%3E%3Cpath d='M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 45px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Main container */
+    .app-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem 3rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Light Glassmorphism navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      background: rgba(255, 250, 245, 0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 80px;
+      padding: 0.7rem 2rem;
+      box-shadow: 0 6px 20px rgba(129, 11, 56, 0.08);
+      margin-bottom: 2.5rem;
+      border: 1px solid rgba(129, 11, 56, 0.15);
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #810B38 0%, #B23A5C 60%, #541A1A 100%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .logo span {
+      background: none;
+      color: #810B38;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
+    /* Enhanced Buttons */
+    .btn {
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      padding: 0.6rem 1.8rem;
+      border-radius: 60px;
+      font-size: 0.9rem;
+      transition: all 0.25s ease;
+    }
+
+    .btn-primary {
+      background: #810B38;
+      color: white;
+      box-shadow: 0 4px 12px rgba(129, 11, 56, 0.25);
+    }
+    .btn-primary:hover {
+      background: #541A1A;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(129, 11, 56, 0.35);
+    }
+
+    .btn-outline {
+      border: 1.8px solid #810B38;
+      color: #810B38;
+      background: rgba(255,255,255,0.5);
+    }
+    .btn-outline:hover {
+      background: #810B38;
+      color: white;
+    }
+
+    /* Social login buttons */
+    .social-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin: 1.5rem 0 1rem;
+    }
+    .social-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 0.7rem;
+      border-radius: 60px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      font-size: 0.9rem;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(129, 11, 56, 0.2);
+      color: #3c2a2a;
+    }
+    .social-btn.google:hover {
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(219, 68, 55, 0.2);
+      border-color: #DB4437;
+      color: #DB4437;
+    }
+    .social-btn.facebook:hover {
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(24, 119, 242, 0.2);
+      border-color: #1877F2;
+      color: #1877F2;
+    }
+    .divider {
+      text-align: center;
+      margin: 1rem 0;
+      position: relative;
+      color: #810B38;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    .divider::before, .divider::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 40%;
+      height: 1px;
+      background: rgba(129, 11, 56, 0.25);
+    }
+    .divider::before { left: 0; }
+    .divider::after { right: 0; }
+
+    /* Light Glass auth panels */
+    .auth-section {
+      background: rgba(255, 248, 240, 0.8);
+      backdrop-filter: blur(20px);
+      border-radius: 2rem;
+      padding: 2.2rem 2.5rem;
+      max-width: 500px;
+      margin: 2rem auto;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(129, 11, 56, 0.2);
+    }
+
+    .auth-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #541A1A;
+      margin-bottom: 1.8rem;
+      text-align: center;
+    }
+
+    .input-group {
+      margin-bottom: 1.3rem;
+    }
+    .input-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: #541A1A;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 0.85rem 1.2rem;
+      border-radius: 60px;
+      border: 1px solid rgba(129, 11, 56, 0.25);
+      background: white;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+    .input-group input:focus {
+      outline: none;
+      border-color: #810B38;
+      box-shadow: 0 0 0 3px rgba(129, 11, 56, 0.1);
+    }
+
+    .auth-switch {
+      text-align: center;
+      margin-top: 1.2rem;
+      color: #541A1A;
+    }
+    .auth-switch a {
+      color: #810B38;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* Homepage */
+    .section-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #541A1A;
+      margin: 0.5rem 0 1.8rem 0;
+      border-left: 6px solid #810B38;
+      padding-left: 1.2rem;
+    }
+
+    /* Light Tabs */
+    .tabs-container {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+      background: rgba(255, 245, 235, 0.6);
+      backdrop-filter: blur(8px);
+      border-radius: 80px;
+      padding: 0.5rem;
+      width: fit-content;
+      border: 1px solid rgba(129, 11, 56, 0.2);
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 0.6rem 1.6rem;
+      border-radius: 60px;
+      cursor: pointer;
+      color: #541A1A;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: #810B38;
+      color: white;
+      box-shadow: 0 4px 12px rgba(129,11,56,0.2);
+    }
+    .tab-btn:not(.active):hover {
+      background: rgba(129, 11, 56, 0.1);
+    }
+
+    /* Flight Cards - Light & airy */
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-top: 1rem;
+    }
+
+    .event-card {
+      background: rgba(255, 250, 245, 0.85);
+      backdrop-filter: blur(8px);
+      border-radius: 1.8rem;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(129, 11, 56, 0.12);
+    }
+    .event-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 32px rgba(129, 11, 56, 0.12);
+      background: rgba(255, 252, 248, 0.95);
+    }
+    .event-img {
+      height: 150px;
+      background: linear-gradient(105deg, #F1E2D1, #EAD1B8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: #810B38;
+    }
+    .event-details {
+      padding: 1.2rem 1.3rem 1.6rem;
+    }
+    .event-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #810B38;
+      margin-bottom: 0.3rem;
+    }
+    .route-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      background: rgba(129, 11, 56, 0.1);
+      padding: 0.2rem 0.9rem;
+      border-radius: 40px;
+      color: #541A1A;
+      margin: 0.4rem 0;
+    }
+    .event-date {
+      font-size: 0.8rem;
+      background: #F1E2D1;
+      display: inline-block;
+      padding: 0.25rem 1rem;
+      border-radius: 40px;
+      margin: 0.6rem 0;
+      font-weight: 500;
+      color: #541A1A;
+    }
+    .price {
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: #810B38;
+      margin: 0.5rem 0;
+    }
+    .buy-btn {
+      width: 100%;
+      margin-top: 0.8rem;
+      background: #810B38;
+      color: white;
+      border: none;
+      padding: 0.7rem;
+      border-radius: 60px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .buy-btn:hover {
+      background: #541A1A;
+      transform: scale(1.01);
+    }
+
+    .toast-msg {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #541A1A;
+      color: #F1E2D1;
+      padding: 0.8rem 2rem;
+      border-radius: 60px;
+      font-weight: 500;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      z-index: 1000;
+    }
+
+    .user-greeting {
+      background: rgba(129, 11, 56, 0.1);
+      padding: 0.4rem 1.2rem;
+      border-radius: 60px;
+      font-weight: 600;
+      color: #541A1A;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    footer {
+      margin-top: 4rem;
+      text-align: center;
+      color: #7c5f50;
+      border-top: 1px solid rgba(129, 11, 56, 0.2);
+      padding-top: 2rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 680px) {
+      .app-container { padding: 1rem; }
+      .navbar { flex-direction: column; border-radius: 2rem; }
+      .social-buttons { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <div class="navbar">
+    <div class="logo">?? Sky<span>Wings</span></div>
+    <div class="nav-buttons" id="navAuthButtons">
+      <button class="btn btn-outline" id="showLoginBtn">Log in</button>
+      <button class="btn btn-primary" id="showSignupBtn">Sign up</button>
+    </div>
+    <div id="userInfoArea" class="hidden"></div>
+  </div>
+
+  <!-- SIGNUP PANEL -->
+  <div id="signupPanel" class="auth-section hidden">
+    <div class="auth-title">?? Join SkyWings</div>
+    <div class="input-group">
+      <label>Full name</label>
+      <input type="text" id="signupName" placeholder="e.g., Emma Watson">
+    </div>
+    <div class="input-group">
+      <label>Email</label>
+      <input type="email" id="signupEmail" placeholder="hello@skywings.com">
+    </div>
+    <div class="input-group">
+      <label>Password</label>
+      <input type="password" id="signupPassword" placeholder="min. 6 characters">
+    </div>
+    <button class="btn btn-primary" id="doSignupBtn" style="width:100%;">Create Account ?</button>
+    
+    <div class="divider">or</div>
+    <div class="social-buttons">
+      <button class="social-btn google" id="googleSignUpBtn">?? Sign up with Google</button>
+      <button class="social-btn facebook" id="facebookSignUpBtn">?? Sign up with Facebook</button>
+    </div>
+    <div class="auth-switch">Already have an account? <a id="switchToLoginFromSignup">Log in</a></div>
+  </div>
+
+  <!-- LOGIN PANEL (with social login) -->
+  <div id="loginPanel" class="auth-section hidden">
+    <div class="auth-title">Welcome Back ??</div>
+    <div class="input-group">
+      <label>Email</label>
+      <input type="email" id="loginEmail" placeholder="your@skywings.com">
+    </div>
+    <div class="input-group">
+      <label>Password</label>
+      <input type="password" id="loginPassword" placeholder="븬븬븬">
+    </div>
+    <button class="btn btn-primary" id="doLoginBtn" style="width:100%;">Board & Fly ?</button>
+    
+    <div class="divider">or continue with</div>
+    <div class="social-buttons">
+      <button class="social-btn google" id="googleLoginBtn">?? Google Login</button>
+      <button class="social-btn facebook" id="facebookLoginBtn">?? Facebook Login</button>
+    </div>
+    <div class="auth-switch">New traveler? <a id="switchToSignupFromLogin">Sign up</a></div>
+  </div>
+
+  <!-- HOMEPAGE FLIGHTS -->
+  <div id="homepagePanel" class="hidden">
+    <div class="section-title">?? Explore Destinations � Flight Tickets</div>
+    <div class="tabs-container">
+      <button class="tab-btn active" data-tab="all">All Flights</button>
+      <button class="tab-btn" data-tab="international">International</button>
+      <button class="tab-btn" data-tab="domestic">Domestic</button>
+      <button class="tab-btn" data-tab="luxury">Luxury Class</button>
+    </div>
+    <div id="eventsGridContainer" class="events-grid"></div>
+  </div>
+  <footer>? Light Glass Cabin | Secure Booking | Fly with Elegance</footer>
+</div>
+
+<script>
+  // --------------------- MOCK USER SYSTEM WITH SOCIAL SUPPORT ---------------------
+  let users = JSON.parse(localStorage.getItem('skywings_users_v2')) || [];
+  let currentUser = JSON.parse(sessionStorage.getItem('skywings_currentUser_v2')) || null;
+
+  // Flight Catalog (Airline theme)
+  const allFlights = [
+    { id: 1, title: "New York JFK ? London Heathrow", category: "international", date: "June 15, 2026 � 10:30 PM", gate: "Terminal 4, Gate B12", price: "$649", desc: "Non-stop luxury cabin � meals included", imgIcon: "????????", route: "JFK ? LHR", airline: "SkyWings Atlantic" },
+    { id: 2, title: "Los Angeles ? Tokyo Haneda", category: "international", date: "July 3, 2026 � 1:15 PM", gate: "TBIT, Gate 108", price: "$899", desc: "Premium seat, Japanese cuisine", imgIcon: "??????", route: "LAX ? HND", airline: "Pacific Wings" },
+    { id: 3, title: "Chicago O'Hare ? Miami", category: "domestic", date: "June 20, 2026 � 8:00 AM", gate: "Concourse C, Gate C21", price: "$179", desc: "Quick getaway, beach ready", imgIcon: "???????", route: "ORD ? MIA", airline: "SunJet" },
+    { id: 4, title: "San Francisco ? Vancouver", category: "domestic", date: "July 12, 2026 � 2:45 PM", gate: "Intl. D, Gate D5", price: "$249", desc: "Scenic west coast route", imgIcon: "??????", route: "SFO ? YVR", airline: "Maple Air" },
+    { id: 5, title: "Paris CDG ? Dubai", category: "international", date: "Aug 1, 2026 � 9:20 PM", gate: "Hall 2, Gate L9", price: "$759", desc: "First class lounge access", imgIcon: "??????????", route: "CDG ? DXB", airline: "Desert Falcon" },
+    { id: 6, title: "Seattle ? Anchorage", category: "domestic", date: "Sept 5, 2026 � 6:15 AM", gate: "North Satellite, N11", price: "$299", desc: "Alaska adventure", imgIcon: "???????", route: "SEA ? ANC", airline: "Northern Lights" },
+    { id: 7, title: "Singapore ? Sydney", category: "international", date: "Oct 10, 2026 � 11:50 PM", gate: "T3, Gate A22", price: "$899", desc: "Overnight premium", imgIcon: "??????", route: "SIN ? SYD", airline: "Kangaroo Air" },
+    { id: 8, title: "Las Vegas ? New York", category: "luxury", date: "Nov 18, 2026 � 7:00 AM", gate: "Terminal 1, Gate D3", price: "$459", desc: "Business class + complimentary cocktails", imgIcon: "??????", route: "LAS ? JFK", airline: "Empire Airways" }
+  ];
+
+  // Helper Functions
+  function saveSession(user) {
+    currentUser = user;
+    if (user) sessionStorage.setItem('skywings_currentUser_v2', JSON.stringify(user));
+    else sessionStorage.removeItem('skywings_currentUser_v2');
+    renderAppByAuthState();
+  }
+
+  function persistUsers() { localStorage.setItem('skywings_users_v2', JSON.stringify(users)); }
+
+  function signupUser(name, email, password, provider = "email") {
+    if (!name || !email) return { success: false, msg: "Name and email required." };
+    if (provider === "email" && (!password || password.length < 6)) return { success: false, msg: "Password must be 6+ characters." };
+    const existing = users.find(u => u.email === email);
+    if (existing) return { success: false, msg: "Email already registered. Try logging in." };
+    const newUser = { id: Date.now(), name, email, password: provider === "email" ? password : `social_${Date.now()}`, provider, bookings: [] };
+    users.push(newUser);
+    persistUsers();
+    return { success: true, user: newUser };
+  }
+
+  function loginUser(email, password) {
+    const found = users.find(u => u.email === email && u.password === password);
+    if (found) return { success: true, user: found };
+    return { success: false, msg: "Invalid email or password." };
+  }
+
+  // Social login mocks (simulate OAuth)
+  function socialLogin(provider, isSignup = false, emailPrefill = null) {
+    let mockEmail = emailPrefill || (provider === "google" ? "user_google@skywings.com" : "user_fb@skywings.com");
+    let mockName = provider === "google" ? "Google Traveler" : "Facebook Flyer";
+    if (isSignup) {
+      // signup via social
+      const existing = users.find(u => u.email === mockEmail);
+      if (existing) {
+        // if exists just login
+        saveSession(existing);
+        showMessage(`Welcome back ${existing.name}! ??`);
+        return;
+      }
+      const newUser = { id: Date.now(), name: mockName, email: mockEmail, password: `${provider}_auto`, provider, bookings: [] };
+      users.push(newUser);
+      persistUsers();
+      saveSession(newUser);
+      showMessage(`Signed up with ${provider}! Welcome ${newUser.name}`);
+    } else {
+      // login via social: find or create minimal
+      let user = users.find(u => u.email === mockEmail);
+      if (!user) {
+        user = { id: Date.now(), name: mockName, email: mockEmail, password: `${provider}_auto`, provider, bookings: [] };
+        users.push(user);
+        persistUsers();
+      }
+      saveSession(user);
+      showMessage(`Logged in with ${provider} as ${user.name}`);
+    }
+  }
+
+  function purchaseTicket(user, flightId) {
+    const flight = allFlights.find(f => f.id === flightId);
+    if (!flight) return { success: false, msg: "Flight not available" };
+    if (user.bookings?.some(b => b.flightId === flightId)) return { success: false, msg: "You already have this ticket!" };
+    user.bookings = user.bookings || [];
+    user.bookings.push({ flightId, title: flight.title, date: flight.date, price: flight.price, gate: flight.gate });
+    const idx = users.findIndex(u => u.id === user.id);
+    if (idx !== -1) users[idx] = user;
+    persistUsers();
+    saveSession(user);
+    return { success: true, msg: `?? Ticket booked! ${flight.title}` };
+  }
+
+  function showMessage(text, isError = false) {
+    let existing = document.querySelector('.toast-msg');
+    if(existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.className = 'toast-msg';
+    toast.style.background = isError ? '#541A1A' : '#810B38';
+    toast.textContent = text;
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 250); }, 2600);
+  }
+
+  let activeTab = "all";
+  function renderFlightsByTab() {
+    const container = document.getElementById('eventsGridContainer');
+    if (!container) return;
+    let filtered = allFlights;
+    if (activeTab !== "all") filtered = allFlights.filter(f => f.category === activeTab);
+    if (filtered.length === 0) {
+      container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem; background:#FDF8F0; border-radius:2rem;">? No flights in this category. Explore another destination!</div>`;
+      return;
+    }
+    container.innerHTML = filtered.map(flight => `
+      <div class="event-card">
+        <div class="event-img">${flight.imgIcon}</div>
+        <div class="event-details">
+          <div class="event-title">${flight.title}</div>
+          <div class="route-badge">?? ${flight.airline} � ${flight.route}</div>
+          <div class="event-date">?? ${flight.date} | ?? ${flight.gate}</div>
+          <div class="event-desc" style="color:#6B4C3B;">${flight.desc}</div>
+          <div class="price">${flight.price}</div>
+          <button class="buy-btn" data-flight-id="${flight.id}">?? Book Flight</button>
+        </div>
+      </div>
+    `).join('');
+    document.querySelectorAll('.buy-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const flightId = parseInt(btn.getAttribute('data-flight-id'));
+        if (!currentUser) { showMessage("Please login or sign up to book", true); return; }
+        const res = purchaseTicket(currentUser, flightId);
+        showMessage(res.msg, !res.success);
+        if(res.success) renderFlightsByTab();
+      });
+    });
+  }
+
+  function initTabs() {
+    document.querySelectorAll('.tab-btn').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        activeTab = tab.getAttribute('data-tab');
+        renderFlightsByTab();
+      });
+    });
+  }
+
+  function renderAppByAuthState() {
+    const signupPanel = document.getElementById('signupPanel');
+    const loginPanel = document.getElementById('loginPanel');
+    const homepagePanel = document.getElementById('homepagePanel');
+    const navDiv = document.getElementById('navAuthButtons');
+    const userDiv = document.getElementById('userInfoArea');
+    if (currentUser) {
+      signupPanel.classList.add('hidden'); loginPanel.classList.add('hidden');
+      homepagePanel.classList.remove('hidden'); navDiv.classList.add('hidden'); userDiv.classList.remove('hidden');
+      userDiv.innerHTML = `<div class="user-greeting">?? ${currentUser.name} ? <span style="font-size:0.7rem;">SkyMiles</span><button id="logoutBtn" class="btn btn-secondary" style="margin-left:10px; background:#F1E2D1; color:#541A1A; padding:0.2rem 1rem;">Logout</button></div>`;
+      document.getElementById('logoutBtn')?.addEventListener('click', () => { saveSession(null); showMessage("Logged out. See you!"); });
+      renderFlightsByTab(); initTabs();
+    } else {
+      signupPanel.classList.remove('hidden'); loginPanel.classList.add('hidden');
+      homepagePanel.classList.add('hidden'); navDiv.classList.remove('hidden'); userDiv.classList.add('hidden');
+    }
+  }
+
+  function showSignup() { 
+    document.getElementById('signupPanel').classList.remove('hidden');
+    document.getElementById('loginPanel').classList.add('hidden');
+  }
+  function showLogin() {
+    document.getElementById('loginPanel').classList.remove('hidden');
+    document.getElementById('signupPanel').classList.add('hidden');
+  }
+
+  // Event Listeners + Social Handlers
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('showLoginBtn')?.addEventListener('click', showLogin);
+    document.getElementById('showSignupBtn')?.addEventListener('click', showSignup);
+    document.getElementById('switchToLoginFromSignup')?.addEventListener('click', (e) => { e.preventDefault(); showLogin(); });
+    document.getElementById('switchToSignupFromLogin')?.addEventListener('click', (e) => { e.preventDefault(); showSignup(); });
+
+    // Normal signup
+    document.getElementById('doSignupBtn')?.addEventListener('click', () => {
+      const name = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const pwd = document.getElementById('signupPassword').value;
+      const res = signupUser(name, email, pwd, "email");
+      if(res.success) { showMessage(`Welcome ${res.user.name}! Please login.`); showLogin(); document.getElementById('signupName').value = ''; document.getElementById('signupEmail').value = ''; document.getElementById('signupPassword').value = ''; } 
+      else showMessage(res.msg, true);
+    });
+    // Normal login
+    document.getElementById('doLoginBtn')?.addEventListener('click', () => {
+      const email = document.getElementById('loginEmail').value.trim();
+      const pwd = document.getElementById('loginPassword').value;
+      const res = loginUser(email, pwd);
+      if(res.success) { saveSession(res.user); showMessage(`?? Welcome back ${res.user.name}!`); document.getElementById('loginEmail').value = ''; document.getElementById('loginPassword').value = ''; } 
+      else showMessage(res.msg, true);
+    });
+
+    // SOCIAL LOGIN INTEGRATION (Google & Facebook)
+    document.getElementById('googleSignUpBtn')?.addEventListener('click', () => socialLogin('google', true, "traveler_google@skywings.com"));
+    document.getElementById('facebookSignUpBtn')?.addEventListener('click', () => socialLogin('facebook', true, "fb_flyer@skywings.com"));
+    document.getElementById('googleLoginBtn')?.addEventListener('click', () => socialLogin('google', false, "traveler_google@skywings.com"));
+    document.getElementById('facebookLoginBtn')?.addEventListener('click', () => socialLogin('facebook', false, "fb_flyer@skywings.com"));
+
+    // Demo user for quick test
+    if(users.length === 0) {
+      users.push({ id: 777, name: "Luna Star", email: "demo@skywings.com", password: "demo123", bookings: [] });
+      persistUsers();
+    }
+    if (currentUser) renderAppByAuthState(); else renderAppByAuthState();
+  });
+</script>
+</body>
+</html>
